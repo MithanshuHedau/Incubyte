@@ -4,10 +4,10 @@ const ctrl = require("../controllers/sweet.controller");
 const { authenticate, requireAdmin } = require("../middleware/auth.middleware");
 
 // Protected routes
-router.post("/", authenticate, ctrl.createSweet);
+router.post("/", authenticate, requireAdmin, ctrl.createSweet);
 router.get("/", authenticate, ctrl.getAllSweets);
 router.get("/search", authenticate, ctrl.searchSweets);
-router.put("/:id", authenticate, ctrl.updateSweet);
+router.put("/:id", authenticate, requireAdmin, ctrl.updateSweet);
 router.delete("/:id", authenticate, requireAdmin, ctrl.deleteSweet);
 router.get("/allUsers", authenticate, requireAdmin, ctrl.getAllUsers);
 

@@ -15,7 +15,9 @@ async function getAllSweets(req, res) {
     const sweets = await Sweet.find().sort({ createdAt: -1 });
     res.json(sweets);
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch sweets", error: err.message });
   }
 }
 
