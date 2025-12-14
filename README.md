@@ -1,4 +1,4 @@
-# 🍬 Sweet Shop Management System
+# 🍬 Kata SweetShop Management System
 
 A full-stack web application for managing a sweet shop with role-based access control. Built with React (Vite) for the frontend and Node.js/Express for the backend, with MongoDB as the database.
 
