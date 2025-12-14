@@ -18,8 +18,6 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/sweets", sweetsRoutes);
 
-
-
 app.get("/", (req, res) => {
   res.send("Sweet Shop API is running");
 });

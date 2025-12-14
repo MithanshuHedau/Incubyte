@@ -1,4 +1,5 @@
 const Sweet = require("../model/Sweet.model");
+const Purchase = require("../model/Purchase.model");
 
 async function createSweet(req, res) {
   try {
@@ -72,6 +73,18 @@ async function purchaseSweet(req, res) {
     if (!sweet) return res.status(404).json({ message: "Not found" });
     if (sweet.quantity < qty)
       return res.status(400).json({ message: "Insufficient quantity" });
+
+    // Calculate total price
+    const totalPrice = sweet.price * qty;
+
+    // Create purchase record
+    await Purchase.create({
+      user: req.user._id,
+      sweet: sweet._id,
+      quantityPurchased: qty,
+      totalPrice: totalPrice,
+    });
+
     sweet.quantity -= qty;
     sweet.sold = (sweet.sold || 0) + qty;
     await sweet.save();
@@ -108,6 +121,35 @@ async function getAllUsers(req, res) {
   }
 }
 
+// Get purchase history for logged-in user
+async function getMyPurchases(req, res) {
+  try {
+    const purchases = await Purchase.find({ user: req.user._id })
+      .populate("sweet", "name category price")
+      .sort({ createdAt: -1 });
+    res.json(purchases);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch purchases", error: err.message });
+  }
+}
+
+// Get all purchases (admin only)
+async function getAllPurchases(req, res) {
+  try {
+    const purchases = await Purchase.find()
+      .populate("user", "name email")
+      .populate("sweet", "name category price")
+      .sort({ createdAt: -1 });
+    res.json(purchases);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch purchases", error: err.message });
+  }
+}
+
 module.exports = {
   createSweet,
   getAllSweets,
@@ -117,4 +159,6 @@ module.exports = {
   purchaseSweet,
   restockSweet,
   getAllUsers,
+  getMyPurchases,
+  getAllPurchases,
 };

@@ -11,6 +11,10 @@ router.put("/:id", authenticate, requireAdmin, ctrl.updateSweet);
 router.delete("/:id", authenticate, requireAdmin, ctrl.deleteSweet);
 router.get("/allUsers", authenticate, requireAdmin, ctrl.getAllUsers);
 
+// Purchase history routes
+router.get("/my-purchases", authenticate, ctrl.getMyPurchases);
+router.get("/all-purchases", authenticate, requireAdmin, ctrl.getAllPurchases);
+
 // Purchase + restock
 router.post("/:id/purchase", authenticate, ctrl.purchaseSweet);
 router.post("/:id/restock", authenticate, requireAdmin, ctrl.restockSweet);
