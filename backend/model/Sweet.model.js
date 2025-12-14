@@ -11,7 +11,7 @@ const sweetSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["Chocolate", "Candy", "Pastry", "Indian", "Other"],
+      trim: true,
     },
 
     price: {
