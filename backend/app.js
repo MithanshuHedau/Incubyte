@@ -10,8 +10,29 @@ const sweetsRoutes = require("./routes/sweets.routes");
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS configuration - allow multiple origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL, // Add your deployed frontend URL in environment variable
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all origins for now, restrict in production
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Routes
@@ -22,8 +43,10 @@ app.get("/", (req, res) => {
   res.send("Sweet Shop API is running");
 });
 
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
   connectDb();
-  console.log(`Server running on port ${process.env.PORT}`);
-  console.log(`Website running on http://localhost:${process.env.PORT}`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Website running on http://localhost:${PORT}`);
 });
