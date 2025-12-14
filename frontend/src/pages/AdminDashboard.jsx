@@ -5,8 +5,6 @@ import SweetCard from "../components/SweetCard";
 import SweetModal from "../components/SweetModal";
 import { sweetService } from "../services/sweetService";
 
-const CATEGORIES = ["All", "Chocolate", "Candy", "Pastry", "Indian", "Other"];
-
 function AdminDashboard() {
   const [sweets, setSweets] = useState([]);
   const [users, setUsers] = useState([]);
@@ -17,6 +15,7 @@ function AdminDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [editingSweet, setEditingSweet] = useState(null);
   const [activeTab, setActiveTab] = useState("sweets");
+  const [categories, setCategories] = useState(["All"]);
 
   useEffect(() => {
     fetchSweets();
@@ -28,6 +27,10 @@ function AdminDashboard() {
     try {
       const data = await sweetService.getAllSweets();
       setSweets(data);
+
+      // Extract unique categories from sweets
+      const uniqueCategories = ["All", ...new Set(data.map((s) => s.category))];
+      setCategories(uniqueCategories);
     } catch (error) {
       toast.error("Failed to fetch sweets");
     } finally {
@@ -161,6 +164,8 @@ function AdminDashboard() {
                   justifyContent: "space-between",
                   alignItems: "center",
                   marginBottom: "16px",
+                  flexWrap: "wrap",
+                  gap: "12px",
                 }}
               >
                 <h2>🍬 Manage Sweets</h2>
@@ -179,7 +184,7 @@ function AdminDashboard() {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>

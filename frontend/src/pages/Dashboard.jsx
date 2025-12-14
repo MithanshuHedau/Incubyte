@@ -5,8 +5,6 @@ import SweetCard from "../components/SweetCard";
 import { sweetService } from "../services/sweetService";
 import { useAuth } from "../context/AuthContext";
 
-const CATEGORIES = ["All", "Chocolate", "Candy", "Pastry", "Indian", "Other"];
-
 function Dashboard() {
   const { isAdmin } = useAuth();
   const [sweets, setSweets] = useState([]);
@@ -15,6 +13,7 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [activeTab, setActiveTab] = useState("shop");
+  const [categories, setCategories] = useState(["All"]);
 
   useEffect(() => {
     fetchSweets();
@@ -28,6 +27,10 @@ function Dashboard() {
     try {
       const data = await sweetService.getAllSweets();
       setSweets(data);
+
+      // Extract unique categories from sweets
+      const uniqueCategories = ["All", ...new Set(data.map((s) => s.category))];
+      setCategories(uniqueCategories);
     } catch (error) {
       toast.error("Failed to fetch sweets");
     } finally {
@@ -100,14 +103,17 @@ function Dashboard() {
               marginBottom: "16px",
             }}
           >
-            <button
-              className={`btn ${
-                activeTab === "shop" ? "btn-primary" : "btn-secondary"
-              }`}
-              onClick={() => setActiveTab("shop")}
-            >
-              🍭 Shop Sweets
-            </button>
+            <div className="p-4 bg-orange-50 rounded-lg shadow-sm">
+              <p className="text-lg font-semibold text-orange-700 mb-2">
+                Welcome to our Sweet Shop 🍭
+              </p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                Discover a delightful collection of freshly prepared sweets made
+                with authentic and premium ingredients. Every treat is crafted
+                to add sweetness to your special moments.
+              </p>
+            </div>
+
             {/* Hide purchase history tab for admin in user view */}
             {!isAdmin && (
               <button
@@ -137,7 +143,7 @@ function Dashboard() {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
